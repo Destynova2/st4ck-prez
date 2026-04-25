@@ -51,8 +51,8 @@ ouverte sur ce qui reste à faire.
 
 ## Liens
 
-- Code : `github.com/azerozero/st4ck`
-- Slides (sources) : `github.com/<user>/st4ck-prez`
+- Code : `github.com/Destynova2/st4ck`
+- Slides (sources) : `github.com/Destynova2/st4ck-prez`
 - Roadmap : `docs/roadmap.md` dans le repo st4ck
 
 ## Visuels

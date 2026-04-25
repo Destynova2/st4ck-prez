@@ -163,7 +163,7 @@ Si la salle mord (questions IA), basculer sur grob en Q&A. Sinon rester sur l'an
 
 ## `git clone` · `make local-up` · feedback en issue
 
-**github.com/azerozero/st4ck** — étoiles bienvenues
+**github.com/Destynova2/st4ck** — étoiles bienvenues
 **Prochain meetup** : démo live Kamaji multi-tenant *(visée si Gate 2 livré)*
 
 <!--

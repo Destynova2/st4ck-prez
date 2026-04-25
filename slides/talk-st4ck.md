@@ -276,7 +276,7 @@ L'audience CNCF Lorient récompense cette transparence (note pacing : ne pas s'e
 
 ## `git clone` · `make local-up` · feedback en issue
 
-**github.com/azerozero/st4ck** — étoiles bienvenues
+**github.com/Destynova2/st4ck** — étoiles bienvenues
 **Prochain meetup** : démo live Kamaji multi-tenant *(visée si Gate 2 livré)*
 **Contact** : issues GitHub, Slack CNCF Lorient
 

@@ -1,6 +1,6 @@
 # st4ck-prez
 
-Decks Marp pour présenter [st4ck](https://github.com/azerozero/st4ck) — la
+Decks Marp pour présenter [st4ck](https://github.com/Destynova2/st4ck) — la
 plateforme Kubernetes souveraine, air-gappable, **conçue pour héberger des
 agents IA** (trading, LLM, RAG) avec [grob](https://github.com/azerozero/grob)
 en proxy LLM frontal.
@@ -120,6 +120,6 @@ en fin de workflow.
 
 ## Licence
 
-Decks et thème sous licence du dépôt parent (st4ck). Les éléments visuels CNCF
+[MIT](LICENSE) — code, thème et contenu des decks. Les éléments visuels CNCF
 et CNCF Lorient appartiennent à leurs propriétaires respectifs et sont utilisés
 en conformité avec la *CNCF Trademark Usage Guidelines*.

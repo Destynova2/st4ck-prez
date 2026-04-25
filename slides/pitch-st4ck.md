@@ -65,7 +65,7 @@ Si on me demande « pourquoi pas k3s ? » : « k3s est un binaire, Talos est un 
 
 ## **Essayez maintenant** : `git clone && make local-up` — **5 min**
 
-**st4ck** *(socle livré)* — `github.com/azerozero/st4ck`
+**st4ck** *(socle livré)* — `github.com/Destynova2/st4ck`
 **grob** *(Q3 2026)* — `github.com/azerozero/grob`
 
 <!--
