@@ -12,15 +12,13 @@ author: 'Ludwig'
 
 # st4ck
 
-## Kubernetes **souverain** en une commande.
-## Du bare metal à la prod, **sans secret en Git**.
-
-Pitch · 2 minutes
+## Le Kubernetes **souverain** pour vos **agents IA**.
 
 <!--
-Pacing: 30 s. Une phrase d'introduction : « st4ck, c'est ma réponse à la question
-‹combien de secrets vivent dans nos repos Git ?› ». Énoncer son nom, marquer le silence.
-Le pitch est un format flash, pas un talk : 3 slides, pas de wandering.
+Pacing: 20 s. Hook unique, une seule phrase.
+« st4ck, c'est le Kubernetes pour faire tourner des agents IA — trading, LLM, RAG —
+sans leur donner les clés du royaume. » Marquer le silence 2 secondes.
+Le pitch est un format flash : 3 slides, pas de digression.
 -->
 
 ---
@@ -47,12 +45,13 @@ Le pitch est un format flash, pas un talk : 3 slides, pas de wandering.
 </div>
 </div>
 
-> Talos + OpenTofu + Cilium + OpenBao. Air-gappable. **Pensé pour héberger vos agents.**
+> Talos zéro-shell + OpenBao + Cilium eBPF + **grob** (proxy LLM audité). **Vos agents tournent ici, vos secrets restent ailleurs.**
 
 <!--
-Pacing: 60 s. Pointer chaque chiffre, marquer un silence après chaque.
-Mentionner les 4 outils-clés en une phrase : Talos, OpenTofu, Cilium, OpenBao.
-Si on me demande « pourquoi pas k3s ? » : « k3s est un binaire, Talos est un OS — pas le même niveau de promesse ».
+Pacing: 70 s. Pointer chaque chiffre, marquer un silence.
+30 min mesuré sur Scaleway. 0 secret = `git grep -i token` → 0. −65 % = break-even à 2h/jour.
+Le tooling : Talos (zéro SSH), OpenBao (PKI + secrets), Cilium (eBPF + mTLS), grob (egress LLM audité).
+Si on me demande « pourquoi pas k3s ? » : « k3s est un binaire, Talos est un OS. »
 -->
 
 ---
@@ -61,11 +60,14 @@ Si on me demande « pourquoi pas k3s ? » : « k3s est un binaire, Talos est un 
 
 # **Et si votre prochain cluster** ne vivait pas dans Git ?
 
-## `git clone` · `make local-up` · feedback en issue
+## `git clone` · `make local-up` · **5 min** pour tester
 
-**github.com/azerozero/st4ck**
+**st4ck** — `github.com/azerozero/st4ck`
+**grob** — `github.com/azerozero/grob`
 
 <!--
-Pacing: 30 s. Callback à la slide 1 « sans secret en Git » → « ne vit pas dans Git ».
-3 verbes : essayer, contribuer, étoiler. Si question, donner mon mail/GitHub.
+Pacing: 30 s. Callback explicite slide 1 : « secret en Git » → « ne vit pas dans Git ».
+3 verbes : essayer, contribuer, étoiler.
+Mentionner grob comme suite logique : « la même logique appliquée au trafic LLM. »
+Q&A possibles : « k3s ? » (différent niveau), « comment intégrer Kamaji ? » (Q3 2026).
 -->
