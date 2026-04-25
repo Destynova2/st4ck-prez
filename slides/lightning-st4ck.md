@@ -57,7 +57,7 @@ Transition : « st4ck, c'est ma réponse à ces 4 lignes-là. »
 <div>
 <span class="num">0</span>
 <span class="label">secret en clair dans le repo</span>
-<span class="sub">random_id Terraform → OpenBao → ESO</span>
+<span class="sub">random_id Terraform → OpenBao → ExternalSecrets</span>
 </div>
 <div>
 <span class="num">−65 %</span>
@@ -83,7 +83,7 @@ Le reste du deck = la preuve de ces trois nombres.
 | **OS** | Talos Linux 1.12 | Immutable, zéro SSH, API only |
 | **IaC** | OpenTofu + Flux | 8 stacks séquentiels, GitOps day-2 |
 | **CNI** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS, L7 policies |
-| **Secrets** | OpenBao + ESO | Random_id Terraform → jamais en clair |
+| **Secrets** | OpenBao + ExternalSecrets (ESO) | Random_id Terraform → jamais en clair |
 | **Stockage** | Garage (S3) + Velero | ~300 MB RAM, backup/restore validé |
 
 <!--

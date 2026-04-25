@@ -36,7 +36,7 @@ Le pitch est un format flash : 3 slides, pas de digression.
 <div>
 <span class="num">0</span>
 <span class="label">secret en clair dans le repo</span>
-<span class="sub">random_id Terraform → OpenBao → ESO</span>
+<span class="sub">random_id Terraform → OpenBao → ExternalSecrets</span>
 </div>
 <div>
 <span class="num">−65 %</span>

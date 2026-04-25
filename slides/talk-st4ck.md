@@ -58,7 +58,7 @@ Transition : « st4ck, c'est ce que j'aurais voulu avoir ce jour-là. »
 <div>
 <span class="num">0</span>
 <span class="label">secret en clair dans le repo</span>
-<span class="sub">random_id Terraform → OpenBao → ESO</span>
+<span class="sub">random_id Terraform → OpenBao → ExternalSecrets</span>
 </div>
 <div>
 <span class="num">−65 %</span>
@@ -90,7 +90,7 @@ Transition : « Le reste de ce talk = la preuve de ces trois chiffres. »
 | **OS** | Talos Linux 1.12 | Immutable, zéro SSH, API only |
 | **IaC** | OpenTofu + Flux | 8 stacks séquentiels, GitOps day-2 |
 | **CNI** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS, L7 policies |
-| **Secrets** | OpenBao + ESO | Random_id Terraform → jamais en clair |
+| **Secrets** | OpenBao + ExternalSecrets (ESO) | Random_id Terraform → jamais en clair |
 | **Stockage** | Garage (S3) + Velero | ~300 MB RAM, backup/restore validé |
 
 <!--
@@ -165,7 +165,7 @@ en commit. Ici Terraform génère, on ne saisit jamais rien.
 ```
 
 - **Talos zéro shell** → un agent compromis ne peut pas pivoter sur l'OS
-- **OpenBao + ESO** → il ne voit que les secrets de son tenant
+- **OpenBao + ExternalSecrets** → il ne voit que les secrets de son tenant
 - **Kamaji** → un control plane par agent, blast radius contenu
 - **Tetragon (eBPF)** → chaque syscall de l'agent est tracé
 - **grob** → un seul chemin sortant audité pour le trafic LLM
