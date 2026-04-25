@@ -1,0 +1,29 @@
+name: build-slides
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build HTML
+        uses: docker://marpteam/marp-cli:latest
+        with:
+          args: --input-dir slides --theme themes/cncf-lorient.css --html -o dist/
+        env:
+          MARP_USER: root:root
+      - name: Build PDF
+        uses: docker://marpteam/marp-cli:latest
+        with:
+          args: --input-dir slides --theme themes/cncf-lorient.css --pdf --allow-local-files -o dist/
+        env:
+          MARP_USER: root:root
+      - uses: actions/upload-artifact@v4
+        with:
+          name: slides
+          path: dist/

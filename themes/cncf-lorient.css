@@ -1,0 +1,270 @@
+/* @theme cncf-lorient */
+/* Marp theme aligned on the official CNCF brand palette:
+   primary #0086ff, accent #93eaff, pink #d62293 (links).
+   Font: Clarity City (CNCF brand corporate font, open-source via @clr/city),
+   Montserrat fallback (matches the official CNCF Google Slides template). */
+
+@import 'default';
+@import url('https://cdn.jsdelivr.net/npm/@clr/city@1.1.0/css/bundles/default.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --cnl-primary: #0086ff;   /* CNCG primary blue */
+  --cnl-accent:  #93eaff;   /* CNCG turquoise */
+  --cnl-pink:    #d62293;   /* CNCG pink — links */
+  --cnl-ink:     #000000;   /* CNCG black */
+  --cnl-paper:   #ffffff;   /* CNCG cloud white */
+  --cnl-stone:   #e5e5e5;   /* CNCG stone */
+  --cnl-muted:   #4a5568;
+  --cnl-code-bg: #0b1220;
+  --cnl-code-fg: #93eaff;
+}
+
+section {
+  background: var(--cnl-paper);
+  color: var(--cnl-ink);
+  font-family: 'Clarity City', 'Montserrat', -apple-system, "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  font-size: 26px;
+  line-height: 1.3;
+  padding: 60px 80px;
+  letter-spacing: -0.005em;
+}
+
+section::after {
+  color: var(--cnl-muted);
+  font-size: 16px;
+  right: 40px;
+  bottom: 24px;
+}
+
+h1 {
+  color: var(--cnl-primary);
+  font-size: 56px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-top: 0;
+  border-bottom: 4px solid var(--cnl-primary);
+  padding-bottom: 16px;
+}
+
+h2 {
+  color: var(--cnl-ink);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  color: var(--cnl-primary);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+strong { color: var(--cnl-primary); font-weight: 700; }
+em { color: var(--cnl-muted); font-style: normal; }
+
+a { color: var(--cnl-pink); text-decoration: none; border-bottom: 2px solid var(--cnl-pink); }
+
+ul, ol { line-height: 1.4; }
+li { margin: 0.3em 0; }
+li::marker { color: var(--cnl-primary); }
+
+code {
+  background: var(--cnl-accent);
+  color: var(--cnl-ink);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em;
+}
+
+pre {
+  background: var(--cnl-code-bg);
+  color: var(--cnl-code-fg);
+  padding: 20px 24px;
+  border-radius: 8px;
+  border-left: 6px solid var(--cnl-primary);
+  font-size: 22px;
+  line-height: 1.45;
+}
+pre code { background: transparent; color: inherit; padding: 0; }
+
+blockquote {
+  border-left: 6px solid var(--cnl-primary);
+  background: #f0f7ff;
+  color: var(--cnl-ink);
+  padding: 16px 24px;
+  margin: 0.6em 0;
+  font-style: normal;
+  border-radius: 0 8px 8px 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 24px;
+}
+th {
+  background: var(--cnl-primary);
+  color: var(--cnl-paper);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+}
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--cnl-rule);
+}
+tr:nth-child(even) td { background: #f7fafc; }
+
+/* Title slide — sobre style aligned with CNCF Lorient 2024-2026 talks:
+   white bg, left-aligned bold black title, small color block top-left,
+   date + location subtitle in gray. No gradients, no decorative blobs. */
+section.title {
+  background: var(--cnl-paper);
+  color: var(--cnl-ink);
+  text-align: left;
+  padding: 90px 80px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+section.title::before {
+  content: '';
+  position: absolute;
+  top: 60px;
+  left: 80px;
+  width: 64px;
+  height: 64px;
+  background-color: var(--cnl-primary);
+  border-radius: 6px;
+  box-shadow: 14px 14px 0 0 var(--cnl-accent);
+}
+section.title h1 {
+  color: var(--cnl-ink);
+  font-size: 110px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  border: none;
+  padding-bottom: 0;
+  margin: 0 0 32px;
+}
+section.title h2 {
+  color: var(--cnl-ink);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.35;
+  margin: 0 0 8px;
+}
+section.title h2 + h2 { margin-top: 0; }
+section.title p {
+  color: var(--cnl-muted);
+  font-size: 22px;
+  font-weight: 400;
+  margin-top: 32px;
+}
+section.title strong { color: var(--cnl-primary); }
+section.invert::after,
+section.invert footer { color: rgba(255, 255, 255, 0.5); }
+
+/* Inverted slide for emphasis / closing */
+section.invert {
+  background: var(--cnl-ink);
+  color: var(--cnl-paper);
+}
+section.invert h1 { color: var(--cnl-accent); border-bottom-color: var(--cnl-accent); }
+section.invert h2, section.invert h3 { color: var(--cnl-paper); }
+section.invert strong { color: var(--cnl-accent); }
+section.invert code { background: var(--cnl-primary); color: var(--cnl-paper); }
+section.invert blockquote { background: #1a2332; border-left-color: var(--cnl-accent); color: var(--cnl-paper); }
+
+/* Lead slide for big assertions */
+section.lead {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+section.lead h1 { font-size: 64px; border: none; }
+section.lead h2 { font-size: 32px; color: var(--cnl-muted); font-weight: 500; }
+
+/* Section divider — used in long talks (12+ slides) to mark transitions.
+   White bg, big eyebrow label, massive bold black title, blue accent rule. */
+section.divider {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 100px;
+}
+section.divider h1 {
+  color: var(--cnl-ink);
+  font-size: 88px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+section.divider h2 {
+  color: var(--cnl-primary);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+section.divider hr {
+  width: 120px;
+  height: 8px;
+  background: var(--cnl-primary);
+  border: none;
+  margin: 32px 0 0;
+}
+
+/* Stats slide — iconic CNCG "3 stats / 4 stats" page.
+   Wrap stat group with <div class="stats"> ... </div> in markdown HTML. */
+section.stats h1 { margin-bottom: 0.4em; }
+.stats {
+  display: flex;
+  justify-content: space-around;
+  align-items: stretch;
+  gap: 28px;
+  margin-top: 30px;
+}
+.stats > div {
+  flex: 1;
+  text-align: center;
+  padding: 20px 16px;
+  border-top: 6px solid var(--cnl-primary);
+  background: #f7fbff;
+  border-radius: 0 0 8px 8px;
+}
+.stats > div:nth-child(2) { border-top-color: var(--cnl-pink); background: #fff5fb; }
+.stats > div:nth-child(3) { border-top-color: var(--cnl-accent); background: #f0fbff; }
+.stats .num {
+  display: block;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--cnl-primary);
+  letter-spacing: -0.03em;
+}
+.stats > div:nth-child(2) .num { color: var(--cnl-pink); }
+.stats > div:nth-child(3) .num { color: #0086ff; }
+.stats .label {
+  display: block;
+  font-size: 20px;
+  color: var(--cnl-ink);
+  margin-top: 12px;
+  font-weight: 600;
+}
+.stats .sub {
+  display: block;
+  font-size: 16px;
+  color: var(--cnl-muted);
+  margin-top: 6px;
+  font-weight: 400;
+}
