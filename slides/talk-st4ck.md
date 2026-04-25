@@ -21,7 +21,7 @@ Talk · 20 minutes · Q&A à la fin
 
 <!--
 Pacing: 45 s. Présenter, énoncer son nom, son rôle.
-Annoncer la structure : « 4 actes — la douleur, la solution, l'architecture, la roadmap.
+Annoncer la structure : « la douleur d'abord, puis 4 actes — architecture, IA, convictions, engagement.
 Q&A à la fin, pas de questions techniques pendant les 4 premières minutes. »
 -->
 
@@ -62,8 +62,8 @@ Transition : « st4ck, c'est ce que j'aurais voulu avoir ce jour-là. »
 </div>
 <div>
 <span class="num">−65 %</span>
-<span class="label">coût bare metal vs cloud</span>
-<span class="sub">EM-I620E vs POP2 64C/256G — ADR-024</span>
+<span class="label">coût bare metal vs cloud (charge soutenue)</span>
+<span class="sub">EM-I620E 599€ (64C/576G) vs POP2 1715€ (64C/256G) · hors coût ops · ADR-024</span>
 </div>
 </div>
 
@@ -89,7 +89,7 @@ Transition : « Le reste de ce talk = la preuve de ces trois chiffres. »
 |---|---|---|
 | **OS** | Talos Linux 1.12 | Immutable, zéro SSH, API only |
 | **IaC** | OpenTofu + Flux | 8 stacks séquentiels, GitOps day-2 |
-| **CNI** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS, L7 policies |
+| **Réseau (CNI)** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS *(auth chiffrée)*, L7 policies |
 | **Secrets** | OpenBao + ExternalSecrets (ESO) | Random_id Terraform → jamais en clair |
 | **Stockage** | Garage (S3) + Velero | ~300 MB RAM, backup/restore validé |
 
@@ -138,7 +138,7 @@ resource "vault_kv_secret_v2" "admin" {
 - État Terraform chiffré dans **vault-backend** (KV v2)
 - ExternalSecrets matérialise les `Secret` K8s à la volée
 - **Aucun humain** ne voit ni ne saisit le secret initial
-- `git grep -i token` → 0 résultat (démo possible)
+- `git grep -i token` → 0 résultat · `trufflehog` en CI à chaque PR
 
 <!--
 Pacing: 90 s. C'est LE slide « souveraineté ».
@@ -151,14 +151,12 @@ en commit. Ici Terraform génère, on ne saisit jamais rien.
 
 <!-- _class: divider -->
 
-![bg right:38%](../assets/ludwig-portrait-office.png)
-
 ## Acte 2
 # **Et l'IA dans tout ça ?**
 
 ---
 
-# La stack pour **héberger des agents** (trading, LLM, RAG)
+# La stack **cible** pour **héberger des agents** (LLM, RAG, scoring sentiment)
 
 ```
   agents → st4ck (Talos · OpenBao · Tetragon) → grob → LLM externes
@@ -166,9 +164,10 @@ en commit. Ici Terraform génère, on ne saisit jamais rien.
 
 - **Talos zéro shell** → un agent compromis ne peut pas pivoter sur l'OS
 - **OpenBao + ExternalSecrets** → il ne voit que les secrets de son tenant
-- **Kamaji** → un control plane par agent, blast radius contenu
+- **Kamaji** → un control plane par agent, *blast radius* (rayon d'impact) contenu
 - **Tetragon (eBPF)** → chaque syscall de l'agent est tracé
-- **grob** → un seul chemin sortant audité pour le trafic LLM
+
+> *Cas cible : scoring sentiment financier sub-2 min sur news FR/EN — bare metal Scaleway pour la latence d'inférence, grob pour la gouvernance LLM, OpenBao pour les clés API. **Cible Q3 2026.***
 
 <!--
 Pacing: 120 s. C'est le slide qui repositionne st4ck pour 2026.
@@ -190,7 +189,7 @@ Si la salle se réveille ici, c'est l'occasion de mentionner grob plus longuemen
 - 🎯 **Kamaji** : un control plane par tenant/agent (ADR-020)
 - 🎯 **Karpenter** + CAPI : GPU à la demande, bare metal mensuel >2h soutenu
   - **EM-I620E 599 €/mois (64C/576GB) vs POP2 1715 €/mois → −65 %** (ADR-024)
-- 🎯 **grob** : proxy LLM frontal (audit, DLP, routing multi-provider)
+- 🎯 **grob** : proxy LLM frontal (audit, DLP *(prévention de fuite)*, routing multi-provider)
 - 🎯 vLLM + Mixtral 8x22B sur GPU dédié, RAG souverain *(2026-Q3)*
 
 <!--
@@ -203,21 +202,35 @@ prochain meetup, sinon github.com/azerozero/grob".
 
 ---
 
+<!-- _class: divider -->
+
+## Acte 3
+# **Convictions**
+
+---
+
 # **Anti-patterns** que st4ck refuse
 
-- ❌ Stocker des secrets dans des `values.yaml` Helm
-- ❌ Faire du `kubectl apply -f` pour bootstrap (impératif, non-rejouable)
-- ❌ Empiler les CRDs sans ADR (CNCF Sandbox ≠ engagement à long terme)
-- ❌ Service mesh par défaut (NetworkPolicy + Cilium mTLS suffisent — ADR-013)
-- ❌ Backup non-testé (`velero restore` est rejoué en CI à chaque PR)
+- ❌ Secrets dans des `values.yaml` Helm → **fuite garantie**, audit ANSSI échoue
+- ❌ `kubectl apply -f` pour bootstrap → impératif, **non-rejouable** (DR impossible)
+- ❌ Empiler les CRDs sans ADR → **dette d'archi** (maturité Sandbox vs Graduated à évaluer)
+- ❌ Service mesh par défaut → **+40 % charge ops** sans bénéfice (NetworkPolicy + Cilium mTLS suffisent — ADR-013)
+- ❌ Backup non-testé → **RTO non garanti** (`velero restore` rejoué en CI à chaque PR)
 
-> *« Si ça marche en dev, ça marche en prod » est le mensonge le plus cher de l'industrie.*
+> *« Si ça marche en dev, ça marche en prod » : la phrase qui coûte le plus cher en post-incident.*
 
 <!--
 Pacing: 90 s. Slide opinion. Chaque ❌ est défendable, j'invite à challenger.
 Anti-pattern le plus polémique : pas de service mesh par défaut. Beaucoup d'opérateurs
 en mettent un par réflexe. ADR-013 explique pourquoi on attend un besoin réel.
 -->
+
+---
+
+<!-- _class: divider -->
+
+## Acte 4
+# **Engagement**
 
 ---
 
@@ -229,10 +242,30 @@ en mettent un par réflexe. ADR-013 explique pourquoi on attend un besoin réel.
 - 🌐 **Air-gap install** : valider transfert offline complet (Harbor mirror)
 - 🤝 **Contributeurs bienvenus** : issues étiquetées `good-first-issue`
 
+> *Un OSS vit par ses contributeurs. Bienvenue.*
+
 <!--
 Pacing: 80 s. Slide humilité. Lister ce qui n'est pas fini, pas vendre du rêve.
 L'audience CNCF Lorient est mid-deep, ils détectent le bullshit en 30 secondes.
 Plus on est honnête sur les gaps, plus on gagne leur confiance.
+-->
+
+---
+
+# **Ce qui tourne** · ce qui arrive
+
+| | Périmètre | Statut |
+|---|---|---|
+| ✅ **Aujourd'hui** | 8 stacks fondations · 0 secret · 30 min bare-metal-to-prod · −65 % | Livré, mesuré |
+| 🚧 **Q2 2026** | CloudNativePG · Ollama CPU · DecapCMS | En cours |
+| 🎯 **Q3 2026** | Kamaji multi-tenant · grob (proxy LLM) · vLLM/Mixtral | Roadmap |
+
+> *La trajectoire « héberger des agents » est prouvée par l'infra livrée. Pas encore par une démo agent live — c'est le sujet du prochain talk.*
+
+<!--
+Pacing: 60 s. Slide d'honnêteté qui désamorce LA question Q&A létale : « vous pouvez nous montrer un agent qui tourne ? ».
+Réponse : « Non, pas aujourd'hui. Voici ce qui tourne : l'infra. Voici ce qui arrive : l'angle agent. »
+L'audience CNCF Lorient récompense cette transparence (note pacing : ne pas s'excuser, énoncer).
 -->
 
 ---
@@ -244,7 +277,7 @@ Plus on est honnête sur les gaps, plus on gagne leur confiance.
 ## `git clone` · `make local-up` · feedback en issue
 
 **github.com/azerozero/st4ck** — étoiles bienvenues
-**Prochain meetup** : démo live Kamaji multi-tenant
+**Prochain meetup** : démo live Kamaji multi-tenant *(visée si Gate 2 livré)*
 **Contact** : issues GitHub, Slack CNCF Lorient
 
 <!--

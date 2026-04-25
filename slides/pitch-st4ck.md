@@ -12,7 +12,10 @@ author: 'Ludwig'
 
 # st4ck
 
-## Le Kubernetes **souverain** pour vos **agents IA**.
+## Le **substrat** Kubernetes pour vos **agents IA**.
+## Sans leur donner les clés.
+
+*Socle livré · angle agents Q3 2026*
 
 <!--
 Pacing: 20 s. Hook unique, une seule phrase.
@@ -40,12 +43,12 @@ Le pitch est un format flash : 3 slides, pas de digression.
 </div>
 <div>
 <span class="num">−65 %</span>
-<span class="label">coût bare metal vs cloud</span>
-<span class="sub">EM-I620E vs POP2 64C/256G</span>
+<span class="label">coût bare metal vs cloud (charge soutenue)</span>
+<span class="sub">EM-I620E 599€ (64C/576G) vs POP2 1715€ (64C/256G) · hors coût ops</span>
 </div>
 </div>
 
-> Talos zéro-shell + OpenBao + Cilium eBPF + **grob** (proxy LLM audité). **Vos agents tournent ici, vos secrets restent ailleurs.**
+> Talos zéro-shell + OpenBao + Cilium eBPF + **grob** *(proxy LLM audité, Q3 2026)*. **Vos agents tournent ici, vos secrets restent ailleurs.**
 
 <!--
 Pacing: 70 s. Pointer chaque chiffre, marquer un silence.
@@ -60,10 +63,10 @@ Si on me demande « pourquoi pas k3s ? » : « k3s est un binaire, Talos est un 
 
 # **Et si votre prochain cluster** ne vivait pas dans Git ?
 
-## `git clone` · `make local-up` · **5 min** pour tester
+## **Essayez maintenant** : `git clone && make local-up` — **5 min**
 
-**st4ck** — `github.com/azerozero/st4ck`
-**grob** — `github.com/azerozero/grob`
+**st4ck** *(socle livré)* — `github.com/azerozero/st4ck`
+**grob** *(Q3 2026)* — `github.com/azerozero/grob`
 
 <!--
 Pacing: 30 s. Callback explicite slide 1 : « secret en Git » → « ne vit pas dans Git ».

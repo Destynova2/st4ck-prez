@@ -61,8 +61,8 @@ Transition : « st4ck, c'est ma réponse à ces 4 lignes-là. »
 </div>
 <div>
 <span class="num">−65 %</span>
-<span class="label">coût bare metal vs cloud</span>
-<span class="sub">EM-I620E vs POP2 64C/256G — ADR-024</span>
+<span class="label">coût bare metal vs cloud (charge soutenue)</span>
+<span class="sub">EM-I620E 599€ (64C/576G) vs POP2 1715€ (64C/256G) · hors coût ops · ADR-024</span>
 </div>
 </div>
 
@@ -82,7 +82,7 @@ Le reste du deck = la preuve de ces trois nombres.
 |---|---|---|
 | **OS** | Talos Linux 1.12 | Immutable, zéro SSH, API only |
 | **IaC** | OpenTofu + Flux | 8 stacks séquentiels, GitOps day-2 |
-| **CNI** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS, L7 policies |
+| **Réseau (CNI)** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS *(auth chiffrée)*, L7 policies |
 | **Secrets** | OpenBao + ExternalSecrets (ESO) | Random_id Terraform → jamais en clair |
 | **Stockage** | Garage (S3) + Velero | ~300 MB RAM, backup/restore validé |
 
@@ -142,17 +142,16 @@ Anti-pattern qu'on évite : Helm values avec des `password: changeme`.
 
 # Vers la **souveraineté de vos agents IA**
 
-- ✅ **Gate 1** — 8 stacks fondations livrées *(Q1 2026)*
-- 🎯 **Kamaji** — un control plane par tenant *(= un agent isolé par cluster)*
-- 🎯 **Karpenter** — GPU à la demande, bare metal mensuel soutenu (**−65 %** vs cloud)
-- 🎯 **grob** — proxy LLM frontal : **audit, DLP, multi-provider** des appels modèles
-- 🎯 vLLM + Mixtral 8x22B sur GPU dédié, RAG souverain *(Q3 2026)*
+- ✅ **Gate 1 livré** *(Q1 2026)* — 8 stacks fondations
+- 🎯 **Isolation par agent** — Kamaji (1 control plane / tenant) + Karpenter (GPU à la demande, **−65 %**)
+- 🎯 **Gouvernance LLM** — grob : proxy frontal audité, DLP *(prévention de fuite)*, multi-provider
 
 <!--
-Pacing: 80 s. Le slide « destination ».
+Pacing: 60 s. Le slide « destination ». 3 bullets = 3 piliers : socle livré, isolation par agent, gouvernance trafic LLM.
 Recadrage : Kamaji + Karpenter ne sont pas le but, ils sont le moyen. Le but, c'est
 de faire tourner des agents IA (trading, LLM, RAG) dans un environnement audité.
 grob, c'est le complément côté trafic LLM : un agent ne peut pas exfiltrer ce qu'il ne voit pas.
+Backup à mentionner si questions IA : vLLM + Mixtral 8x22B sur GPU dédié, RAG souverain prévu Q3 2026.
 Si la salle mord (questions IA), basculer sur grob en Q&A. Sinon rester sur l'angle infra.
 -->
 
@@ -165,7 +164,7 @@ Si la salle mord (questions IA), basculer sur grob en Q&A. Sinon rester sur l'an
 ## `git clone` · `make local-up` · feedback en issue
 
 **github.com/azerozero/st4ck** — étoiles bienvenues
-**Prochain meetup** : démo live Kamaji multi-tenant
+**Prochain meetup** : démo live Kamaji multi-tenant *(visée si Gate 2 livré)*
 
 <!--
 Pacing: 30 s. Callback explicite au slide 2 : on parlait des secrets dans Git, on ferme avec
