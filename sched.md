@@ -54,3 +54,8 @@ ouverte sur ce qui reste à faire.
 - Code : `github.com/azerozero/st4ck`
 - Slides (sources) : `github.com/<user>/st4ck-prez`
 - Roadmap : `docs/roadmap.md` dans le repo st4ck
+
+## Visuels
+
+- **Headshot sched.com / profil meetup** : `assets/ludwig-portrait-studio.png` (fond neutre, format carré, idéal upload sched)
+- **Visuel narratif Acte 2 / agents IA** : `assets/ludwig-portrait-office.png` (fond bureau avec écrans, utilisé sur le divider talk)

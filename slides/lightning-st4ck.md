@@ -10,6 +10,8 @@ author: 'Ludwig'
 
 <!-- _class: title -->
 
+<img class="portrait" src="../assets/ludwig-portrait-studio.png" alt="Ludwig" />
+
 # st4ck
 
 ## Kubernetes **souverain** en une commande.

@@ -141,6 +141,16 @@ section.title::before {
   border-radius: 6px;
   box-shadow: 14px 14px 0 0 var(--cnl-accent);
 }
+section.title .portrait {
+  position: absolute;
+  top: 56px;
+  right: 80px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 6px var(--cnl-paper), 0 0 0 10px var(--cnl-primary);
+}
 section.title h1 {
   color: var(--cnl-ink);
   font-size: 110px;
@@ -150,6 +160,7 @@ section.title h1 {
   border: none;
   padding-bottom: 0;
   margin: 0 0 32px;
+  max-width: 860px;
 }
 section.title h2 {
   color: var(--cnl-ink);
@@ -157,6 +168,7 @@ section.title h2 {
   font-weight: 500;
   line-height: 1.35;
   margin: 0 0 8px;
+  max-width: 860px;
 }
 section.title h2 + h2 { margin-top: 0; }
 section.title p {

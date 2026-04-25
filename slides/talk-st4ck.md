@@ -10,6 +10,8 @@ author: 'Ludwig'
 
 <!-- _class: title -->
 
+<img class="portrait" src="../assets/ludwig-portrait-studio.png" alt="Ludwig" />
+
 # st4ck
 
 ## Kubernetes **souverain**, du bare metal à la prod.
@@ -148,6 +150,8 @@ en commit. Ici Terraform génère, on ne saisit jamais rien.
 ---
 
 <!-- _class: divider -->
+
+![bg right:38%](../assets/ludwig-portrait-office.png)
 
 ## Acte 2
 # **Et l'IA dans tout ça ?**
