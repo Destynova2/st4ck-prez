@@ -15,7 +15,7 @@ author: 'Clément Liard'
 # st4ck
 
 ## Kubernetes **souverain**, du bare metal à la prod.
-## Sans secret en Git, sans shell sur les nœuds.
+## Zéro secret, zéro shell, zéro drift.
 
 CNCF Lorient · 30 avril 2026 · CCI du Morbihan, Lorient
 
@@ -60,7 +60,6 @@ Si la salle réagit au mot "Défense" : ne pas s'attarder, c'est juste pour posi
 - Tokens cloud collés dans des `values.yaml`
 - Certificats régénérés à la main, expirés un dimanche soir
 - Un **agent IA** qui tourne avec un token AWS oublié dans un ConfigMap
-- L'audit ANSSI dans 3 mois, et toujours pas d'air gap
 
 > *Le cloud-native nous a vendu la reproductibilité. On a hérité de l'opacité.*
 
@@ -345,7 +344,9 @@ BACKUP L4 : screenshots embarqués dans dist/ (cluster + Headlamp) si projecteur
 
 <!-- _class: invert -->
 
-# Et si **votre prochain cluster** ne vivait pas dans Git&nbsp;?
+# Et si **vos secrets** ne vivaient pas dans Git&nbsp;?
+
+## Pas en clair. Pas sur le disque dev. Pas en commit.
 
 <div class="cta-row">
 <div class="cta">
