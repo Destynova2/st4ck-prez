@@ -236,6 +236,37 @@ section.divider hr {
   margin: 32px 0 0;
 }
 
+/* Closing slide with QR — text left, QR card right (used on invert slide). */
+section.invert .cta-row {
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  margin-top: 20px;
+}
+section.invert .cta-row .cta { flex: 1; min-width: 0; }
+section.invert .cta-row .cta h2 { margin-top: 0; }
+section.invert .cta-row .qr {
+  flex-shrink: 0;
+  width: 240px;
+  text-align: center;
+}
+section.invert .cta-row .qr img {
+  width: 220px;
+  height: 220px;
+  display: block;
+  margin: 0 auto;
+  background: var(--cnl-paper);
+  padding: 10px;
+  border-radius: 10px;
+}
+section.invert .cta-row .qr span {
+  display: block;
+  margin-top: 12px;
+  font-size: 18px;
+  color: var(--cnl-accent);
+  font-weight: 600;
+}
+
 /* About slide — speaker intro: portrait left, who/what right.
    Used right after the title in meetup decks for a "qui je suis" beat. */
 section.about {

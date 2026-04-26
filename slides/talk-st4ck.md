@@ -167,7 +167,7 @@ resource "vault_kv_secret_v2" "admin" {
 - État Terraform chiffré dans **vault-backend** (KV v2)
 - ExternalSecrets matérialise les `Secret` K8s à la volée
 - **Aucun humain** ne voit ni ne saisit le secret initial
-- `gitleaks detect` → **0 fuite** · scan automatisé en CI à chaque PR (`.gitleaks.toml`)
+- `gitleaks detect` → **0 fuite** · scan en CI à chaque PR
 
 <!--
 Pacing: 90 s. C'est LE slide « souveraineté ».
@@ -353,15 +353,29 @@ BACKUP L4 : screenshots embarqués dans dist/ (cluster + Headlamp) si projecteur
 
 # Et si **votre prochain cluster** ne vivait pas dans Git ?
 
+<div class="cta-row">
+<div class="cta">
+
 ## `git clone` · `make local-up` · feedback en issue
 
 **github.com/Destynova2/st4ck** — étoiles bienvenues
-**Prochain meetup** : démo live Kamaji multi-tenant *(visée si Gate 2 livré)*
-**Contact** : issues GitHub, Slack CNCF Lorient
+**Prochain meetup** : démo live Kamaji multi-tenant *(Gate 2)*
+**Contact** : issues GitHub · Slack CNCF Lorient
+
+</div>
+<div class="qr">
+
+<img src="../assets/linkedin-qr.png" alt="LinkedIn Clément Liard" />
+
+<span>Connectons-nous sur LinkedIn</span>
+
+</div>
+</div>
 
 <!--
 Pacing: 60 s. Callback explicite à la slide 2 (« secrets dans Git ») → « ne vit pas dans Git ».
 3 CTA empilés : essayer, contribuer, revenir. Inviter Q&A.
+QR LinkedIn affiché tout le long du Q&A → la salle peut scanner pendant les questions.
 Q&A possibles : « k3s vs Talos », « comment vous gérez le DR ? », « cost réel à l'usage ».
 Réponses prêtes : ADR-013 (mesh), ADR-018 (DR), ADR-024 (cost).
 -->
