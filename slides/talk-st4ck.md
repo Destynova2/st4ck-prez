@@ -158,9 +158,7 @@ ROI sécurité immédiat. Si quelqu'un demande « comment je débugge un nœud c
 # Terraform génère, OpenBao stocke, ESO injecte dans K8s
 resource "random_id" "admin_token" { byte_length = 32 }
 resource "vault_kv_secret_v2" "admin" {
-  name = "admin", data_json = jsonencode({
-    token = random_id.admin_token.b64_url
-  })
+  data_json = jsonencode({ token = random_id.admin_token.b64_url })
 }
 ```
 
@@ -185,7 +183,7 @@ en commit. Ici Terraform génère, on ne saisit jamais rien.
 
 ---
 
-# La stack **cible** pour **héberger des agents** (LLM, RAG, scoring sentiment)
+# La stack **cible** pour **héberger des agents**
 
 ```
   agents → st4ck (Talos · OpenBao · Tetragon) → grob → LLM externes
@@ -213,11 +211,9 @@ Si la salle se réveille ici, c'est l'occasion de mentionner grob plus longuemen
 
 # Roadmap — **Kamaji, Karpenter, grob**
 
-- ✅ **Gate 1** — 8 stacks fondations *(2026-Q1, livré)*
-- 🚧 **Gate 2** — CloudNativePG, Ollama CPU, DecapCMS *(2026-Q2)*
+- 🚧 **Gate 2** — CloudNativePG, Ollama CPU, DecapCMS *(2026-Q2, en cours)*
 - 🎯 **Kamaji** : un control plane par tenant/agent (ADR-020)
-- 🎯 **Karpenter** + CAPI : GPU à la demande, bare metal mensuel >2h soutenu
-  - **EM-I620E 599 €/mois (64C/576GB) vs POP2 1715 €/mois → −65 %** (ADR-024)
+- 🎯 **Karpenter** + CAPI : **−65 %** vs cloud managé (EM-I620E vs POP2, ADR-024)
 - 🎯 **grob** : proxy LLM frontal (audit, DLP *(prévention de fuite)*, routing multi-provider)
 - 🎯 vLLM + Mixtral 8x22B sur GPU dédié, RAG souverain *(2026-Q3)*
 
@@ -225,8 +221,8 @@ Si la salle se réveille ici, c'est l'occasion de mentionner grob plus longuemen
 Pacing: 90 s.
 Recadrage du slide vision : Kamaji + Karpenter sont les briques infra,
 grob est la brique gouvernance LLM, et le tout converge vers "héberger des agents en prod".
-Si on me demande "vous pouvez me montrer grob ?" : "Volontiers, mais c'est un autre talk —
-prochain meetup, sinon github.com/azerozero/grob".
+Si on me demande "vous pouvez me montrer grob ?" : "Volontiers, mais c'est un autre talk
+quand ce sera prêt, sinon github.com/azerozero/grob en attendant".
 -->
 
 ---
@@ -289,7 +285,7 @@ Plus on est honnête sur les gaps, plus on gagne leur confiance.
 | 🚧 **Q2 2026** | CloudNativePG · Ollama CPU · DecapCMS | En cours |
 | 🎯 **Q3 2026** | Kamaji multi-tenant · grob (proxy LLM) · vLLM/Mixtral | Roadmap |
 
-> *Démo live de l'infra dans 2 minutes. La démo **agent** live, c'est pour le prochain meetup.*
+> *Démo live de l'infra dans 2 minutes. La démo **agent** live viendra quand grob sera prêt.*
 
 <!--
 Pacing: 60 s. Slide d'honnêteté qui désamorce LA question Q&A létale : « vous pouvez nous montrer un agent qui tourne ? ».
@@ -303,8 +299,6 @@ Transition directe vers la slide démo.
 
 ## Démo
 # **Live, depuis zéro**
-
-<hr/>
 
 <!--
 Pacing: 5 s. Slide de bascule visuelle vers le terminal. Pas de texte à lire, c'est un signal :
@@ -359,7 +353,6 @@ BACKUP L4 : screenshots embarqués dans dist/ (cluster + Headlamp) si projecteur
 ## `git clone` · `make local-up` · feedback en issue
 
 **github.com/Destynova2/st4ck** — étoiles bienvenues
-**Prochain meetup** : démo live Kamaji multi-tenant *(Gate 2)*
 **Contact** : issues GitHub · Slack CNCF Lorient
 
 </div>

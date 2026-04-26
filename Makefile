@@ -3,7 +3,7 @@ THEME      := themes/cncf-lorient.css
 DIST       := dist
 MARP       := npx --yes @marp-team/marp-cli@latest
 
-.PHONY: all html pdf preview clean install-check validate
+.PHONY: all html pdf preview clean install-check validate assets
 
 all: html pdf
 
@@ -11,11 +11,17 @@ all: html pdf
 validate: html
 	node tools/validate.mjs
 
-html:
+html: assets
 	$(MARP) --input-dir $(SLIDES_DIR) --theme $(THEME) --html -o $(DIST)/
+	@# Rewrite ../assets/ → assets/ so dist/ HTML works in Safari (no parent traversal on file://).
+	@sed -i.bak 's|"../assets/|"assets/|g' $(DIST)/*.html && rm -f $(DIST)/*.html.bak
 
 pdf:
 	$(MARP) --input-dir $(SLIDES_DIR) --theme $(THEME) --pdf --allow-local-files -o $(DIST)/
+
+assets:
+	@mkdir -p $(DIST)/assets
+	@cp -R assets/. $(DIST)/assets/
 
 # Live preview. Usage: make preview DECK=lightning-st4ck
 preview:
