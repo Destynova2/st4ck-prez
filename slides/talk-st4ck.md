@@ -2,27 +2,55 @@
 marp: true
 theme: cncf-lorient
 paginate: true
-footer: 'st4ck — talk · 20 min'
+footer: 'st4ck — CNCF Lorient · 2026-04-30'
 title: 'st4ck : Kubernetes souverain, du bare metal à la prod'
 description: 'Talk 20 min — st4ck, plateforme Kubernetes souveraine sur Talos Linux : architecture, anti-patterns, roadmap.'
-author: 'Ludwig'
+author: 'Clément Liard'
 ---
 
 <!-- _class: title -->
 
-<img class="portrait" src="../assets/ludwig-portrait-studio.png" alt="Ludwig" />
+<img class="portrait" src="../assets/clement-portrait-studio.png" alt="Clément Liard" />
 
 # st4ck
 
 ## Kubernetes **souverain**, du bare metal à la prod.
 ## Sans secret en Git, sans shell sur les nœuds.
 
-Talk · 20 minutes · Q&A à la fin
+CNCF Lorient · 30 avril 2026 · CCI du Morbihan, Lorient
+
+Talk · 20 minutes · Q&A à la fin · démo live en parallèle
 
 <!--
 Pacing: 45 s. Présenter, énoncer son nom, son rôle.
 Annoncer la structure : « la douleur d'abord, puis 4 actes — architecture, IA, convictions, engagement.
 Q&A à la fin, pas de questions techniques pendant les 4 premières minutes. »
+**AVANT DE MONTER SUR SCÈNE** : `make scaleway-bootstrap-vm && make scaleway-up ENV=demo INSTANCE=cnclorient REGION=fr-par`
+au minimum 3 minutes avant la slide 1. Le cluster fallback (L2) doit être debout en parallèle dans un autre onglet kubectl.
+-->
+
+---
+
+<!-- _class: about -->
+
+<img class="portrait" src="../assets/clement-portrait-studio.png" alt="Clément Liard" />
+
+<div class="who">
+
+# Clément Liard
+
+## Tech Lead DevSecOps · Dirigeant **A00** · Brest
+
+- ~10 ans en infrastructures critiques — **Défense**, Fintech (Treezor PCI-DSS), IoT
+- Spécialiste **air-gapped**, Zero Trust, IaC (Terraform/OpenTofu) et conteneurisation durcie (Podman/Talos)
+- **st4ck** = mon banc d'essai souverain · `github.com/Destynova2/st4ck` · `a00.fr`
+
+</div>
+
+<!--
+Pacing: 30 s. Se présenter brièvement. Le sujet, c'est st4ck, pas moi.
+« Je dirige A00, je conçois des plateformes K8s pour des environnements où on ne peut pas dépendre d'un hyperscaler — Défense, Fintech, air-gapped. st4ck est ce que j'aurais voulu avoir sur mes 5 dernières missions. »
+Si la salle réagit au mot "Défense" : ne pas s'attarder, c'est juste pour positionner le sérieux du contexte.
 -->
 
 ---
@@ -260,12 +288,62 @@ Plus on est honnête sur les gaps, plus on gagne leur confiance.
 | 🚧 **Q2 2026** | CloudNativePG · Ollama CPU · DecapCMS | En cours |
 | 🎯 **Q3 2026** | Kamaji multi-tenant · grob (proxy LLM) · vLLM/Mixtral | Roadmap |
 
-> *La trajectoire « héberger des agents » est prouvée par l'infra livrée. Pas encore par une démo agent live — c'est le sujet du prochain talk.*
+> *Démo live de l'infra dans 2 minutes. La démo **agent** live, c'est pour le prochain meetup.*
 
 <!--
 Pacing: 60 s. Slide d'honnêteté qui désamorce LA question Q&A létale : « vous pouvez nous montrer un agent qui tourne ? ».
-Réponse : « Non, pas aujourd'hui. Voici ce qui tourne : l'infra. Voici ce qui arrive : l'angle agent. »
-L'audience CNCF Lorient récompense cette transparence (note pacing : ne pas s'excuser, énoncer).
+Réponse : « Pas un agent aujourd'hui. Mais l'infra qui les hébergera, oui — regardons. »
+Transition directe vers la slide démo.
+-->
+
+---
+
+<!-- _class: divider -->
+
+## Démo
+# **Live, depuis zéro**
+
+<hr/>
+
+<!--
+Pacing: 5 s. Slide de bascule visuelle vers le terminal. Pas de texte à lire, c'est un signal :
+« on quitte les slides, on regarde du vrai ».
+-->
+
+---
+
+# Ce qui tourne en direct *(lancé à la slide 1)*
+
+```bash
+# Sur Scaleway, en parallèle de mon talk
+make scaleway-bootstrap-vm    # ~5 min : VM + vault-backend + Gitea
+make scaleway-up               # ~25 min : Talos cluster + 8 stacks
+```
+
+- **VM Scaleway** : `ssh root@…` → `podman ps` (vault-backend + Gitea + Woodpecker)
+- **Cluster Talos** : `talosctl health` → 6 nœuds (3 CP + 3 workers)
+- **Preuve souveraineté** : `git grep -i token` sur le repo → **0 résultat**
+- **Headlamp** : pods running, Garage S3 OK, Flux reconcile vert
+
+> *Si quelque chose foire en live → bascule sur le cluster pré-staged, même preuves, même effet.*
+
+<!--
+Pacing: 150 s. C'EST le climax du talk. Ne pas lire les bullets, exécuter les commandes.
+
+PROTOCOLE DÉMO (à dérouler dans cet ordre) :
+1. Terminal 1 (Scaleway live) : `tail` du log de provisioning. Montrer l'avancement réel.
+2. Terminal 2 (proof) : `git grep -i token` → 0 résultat. **Effet garanti.**
+3. Terminal 3 (cluster pré-staged L2) : déjà connecté. `kubectl get nodes`, `kubectl get pods -A | head`.
+4. Browser : Headlamp ouvert sur le pré-staged → cliquer 1 deployment, montrer ESO en action.
+5. Si live a fini = bonus : `talosctl -n <ip> services` sur le cluster fraîchement né.
+
+PROCÉDURE DE BASCULE FAIL :
+- Si le live échoue (Wi-Fi salle / Scaleway API / IAM) : NE PAS PANIQUER.
+- Dire : « Live foiré, voici le même cluster déjà debout — c'est exactement ce que la démo aurait produit. »
+- Continuer sur Terminal 3 + Browser. Le public retient l'honnêteté, pas le fail.
+
+BACKUP L1 : asciinema pré-enregistré dans `~/demo/scaleway-up.cast` — `asciinema play -s 10`.
+BACKUP L4 : screenshots embarqués dans dist/ (cluster + Headlamp) si projecteur lui-même HS.
 -->
 
 ---

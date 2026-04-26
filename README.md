@@ -7,17 +7,15 @@ en proxy LLM frontal.
 
 > *« Combien de secrets vivent dans vos repos Git ? La réponse de st4ck : zéro. »*
 
-## Decks disponibles
+## Deck
 
 | Format | Slides | Durée | Pour |
 |---|---|---|---|
-| [`pitch-st4ck.md`](slides/pitch-st4ck.md) | 3 | 2 min | Elevator, recruteur, démo flash |
-| [`lightning-st4ck.md`](slides/lightning-st4ck.md) | 8 | 6 min | **CNCF Lorient — 30 avril 2026** |
-| [`talk-st4ck.md`](slides/talk-st4ck.md) | 13 | 20 min | Conf longue (avec dividers et acte IA) |
+| [`talk-st4ck.md`](slides/talk-st4ck.md) | 19 | 20 min + démo live | **CNCF Lorient — 30 avril 2026 · CCI du Morbihan** |
 
-Les trois decks partagent **un thème unique** ([`cncf-lorient.css`](themes/cncf-lorient.css))
-calé sur la palette CNCF officielle (`#0086FF` / `#93EAFF` / `#D62293`) et la
-police corporate **Clarity City** (fallback Montserrat).
+Thème unique ([`cncf-lorient.css`](themes/cncf-lorient.css)) calé sur la palette
+CNCF officielle (`#0086FF` / `#93EAFF` / `#D62293`) et la police corporate
+**Clarity City** (fallback Montserrat).
 
 ## Démarrage rapide
 
@@ -25,11 +23,11 @@ police corporate **Clarity City** (fallback Montserrat).
 # 1. Pré-requis (Node ≥ 20, géré par fnm via .node-version)
 make install-check
 
-# 2. Build HTML (les 3 decks d'un coup)
+# 2. Build HTML
 make html
 
 # 3. Live preview pendant la rédaction
-make preview DECK=lightning-st4ck
+make preview DECK=talk-st4ck
 
 # 4. Export PDF (Marp télécharge Chromium au 1er run)
 make pdf
@@ -45,9 +43,7 @@ Sortie dans `dist/` (HTML + PDF) et `dist/screenshots/` (PNG par slide).
 ```
 st4ck-prez/
 ├── slides/
-│   ├── pitch-st4ck.md         # 3 slides, 2 min
-│   ├── lightning-st4ck.md     # 8 slides, 6 min  (CNCF Lorient)
-│   └── talk-st4ck.md          # 13 slides, 20 min
+│   └── talk-st4ck.md          # 19 slides, 20 min + démo live (CNCF Lorient)
 ├── themes/
 │   └── cncf-lorient.css       # thème CNCF + Clarity City
 ├── assets/

@@ -236,6 +236,38 @@ section.divider hr {
   margin: 32px 0 0;
 }
 
+/* About slide — speaker intro: portrait left, who/what right.
+   Used right after the title in meetup decks for a "qui je suis" beat. */
+section.about {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 60px;
+  padding: 70px 90px;
+}
+section.about .portrait {
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 6px var(--cnl-paper), 0 0 0 10px var(--cnl-primary);
+  flex-shrink: 0;
+}
+section.about .who { flex: 1; min-width: 0; }
+section.about .who h1 {
+  font-size: 64px;
+  margin: 0 0 8px;
+  border: none;
+  padding-bottom: 0;
+}
+section.about .who h2 {
+  font-size: 26px;
+  color: var(--cnl-muted);
+  font-weight: 500;
+  margin: 0 0 18px;
+}
+section.about .who ul { font-size: 22px; }
+
 /* Stats slide — iconic CNCG "3 stats / 4 stats" page.
    Wrap stat group with <div class="stats"> ... </div> in markdown HTML. */
 section.stats h1 { margin-bottom: 0.4em; }
