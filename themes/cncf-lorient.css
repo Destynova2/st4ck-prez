@@ -307,8 +307,12 @@ section.stats h1 { margin-bottom: 0.4em; }
 }
 .stats .sub {
   display: block;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--cnl-muted);
-  margin-top: 6px;
+  margin-top: 8px;
   font-weight: 400;
+  line-height: 1.4;
 }
+.stats .sub strong { color: var(--cnl-ink); font-weight: 700; }
+.stats > div:nth-child(2) .sub strong { color: var(--cnl-pink); }
+.stats > div:nth-child(3) .sub strong { color: var(--cnl-primary); }

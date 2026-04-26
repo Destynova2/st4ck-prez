@@ -90,15 +90,16 @@ Transition : « st4ck, c'est ce que j'aurais voulu avoir ce jour-là. »
 </div>
 <div>
 <span class="num">−65 %</span>
-<span class="label">coût bare metal vs cloud (charge soutenue)</span>
-<span class="sub">EM-I620E 599€ (64C/576G) vs POP2 1715€ (64C/256G) · hors coût ops · ADR-024</span>
+<span class="label">coût VM → bare metal</span>
+<span class="sub"><strong>1715 €</strong> → <strong>599 €/mois</strong><br/>même CPU, +320 GB de RAM</span>
 </div>
 </div>
 
 <!--
 Pacing: 60 s. Pointer chaque carte. Mesurer les chiffres : « 30 min, c'est sur Scaleway,
-incluant le provisioning des serveurs. 0 secret, c'est `git grep -i token` → 0. −65 %,
-c'est break-even à 2h/jour de charge soutenue. »
+incluant le provisioning des serveurs. 0 secret, c'est `gitleaks detect` → 0 fuite. −65 %,
+c'est l'écart mensuel entre une POP2 64C/256G à 1715 € et une EM-I620E 64C/576G à 599 €
+(références Scaleway, ADR-024). Break-even dès 2 h/jour de charge soutenue, hors coût ops. »
 Transition : « Le reste de ce talk = la preuve de ces trois chiffres. »
 -->
 
@@ -166,11 +167,11 @@ resource "vault_kv_secret_v2" "admin" {
 - État Terraform chiffré dans **vault-backend** (KV v2)
 - ExternalSecrets matérialise les `Secret` K8s à la volée
 - **Aucun humain** ne voit ni ne saisit le secret initial
-- `git grep -i token` → 0 résultat · `trufflehog` en CI à chaque PR
+- `gitleaks detect` → **0 fuite** · scan automatisé en CI à chaque PR (`.gitleaks.toml`)
 
 <!--
 Pacing: 90 s. C'est LE slide « souveraineté ».
-Démo live possible : ouvrir le repo, `git grep -i token` → 0. Effet garanti.
+Démo live possible : ouvrir le repo, `gitleaks detect` → 0 fuite. Effet garanti (vrai scanner, pas un grep naïf).
 Anti-pattern qu'on évite : Helm values avec `password: changeme` qui finissent
 en commit. Ici Terraform génère, on ne saisit jamais rien.
 -->
@@ -322,7 +323,7 @@ make scaleway-up               # ~25 min : Talos cluster + 8 stacks
 
 - **VM Scaleway** : `ssh root@…` → `podman ps` (vault-backend + Gitea + Woodpecker)
 - **Cluster Talos** : `talosctl health` → 6 nœuds (3 CP + 3 workers)
-- **Preuve souveraineté** : `git grep -i token` sur le repo → **0 résultat**
+- **Preuve souveraineté** : `gitleaks detect` sur le repo → **0 fuite détectée**
 - **Headlamp** : pods running, Garage S3 OK, Flux reconcile vert
 
 > *Si quelque chose foire en live → bascule sur le cluster pré-staged, même preuves, même effet.*
@@ -332,7 +333,7 @@ Pacing: 150 s. C'EST le climax du talk. Ne pas lire les bullets, exécuter les c
 
 PROTOCOLE DÉMO (à dérouler dans cet ordre) :
 1. Terminal 1 (Scaleway live) : `tail` du log de provisioning. Montrer l'avancement réel.
-2. Terminal 2 (proof) : `git grep -i token` → 0 résultat. **Effet garanti.**
+2. Terminal 2 (proof) : `gitleaks detect --source .` → **0 fuite**. Effet garanti (scanner réel, pas un grep).
 3. Terminal 3 (cluster pré-staged L2) : déjà connecté. `kubectl get nodes`, `kubectl get pods -A | head`.
 4. Browser : Headlamp ouvert sur le pré-staged → cliquer 1 deployment, montrer ESO en action.
 5. Si live a fini = bonus : `talosctl -n <ip> services` sur le cluster fraîchement né.
