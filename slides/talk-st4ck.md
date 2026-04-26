@@ -55,7 +55,7 @@ Si la salle réagit au mot "Défense" : ne pas s'attarder, c'est juste pour posi
 
 ---
 
-# Combien de **secrets** vivent dans vos repos Git ?
+# Combien de **secrets** vivent dans vos repos Git&nbsp;?
 
 - Tokens cloud collés dans des `values.yaml`
 - Certificats régénérés à la main, expirés un dimanche soir
@@ -281,7 +281,7 @@ Plus on est honnête sur les gaps, plus on gagne leur confiance.
 
 | | Périmètre | Statut |
 |---|---|---|
-| ✅ **Aujourd'hui** | 8 stacks fondations · 0 secret · 30 min bare-metal-to-prod · −65 % | Livré, mesuré |
+| ✅ **Aujourd'hui** | 8 stacks fondations · 0 secret · 30 min bare-metal-to-prod · −65&nbsp;% | Livré,&nbsp;mesuré |
 | 🚧 **Q2 2026** | CloudNativePG · Ollama CPU · DecapCMS | En cours |
 | 🎯 **Q3 2026** | Kamaji multi-tenant · grob (proxy LLM) · vLLM/Mixtral | Roadmap |
 
@@ -345,12 +345,12 @@ BACKUP L4 : screenshots embarqués dans dist/ (cluster + Headlamp) si projecteur
 
 <!-- _class: invert -->
 
-# Et si **votre prochain cluster** ne vivait pas dans Git ?
+# Et si **votre prochain cluster** ne vivait pas dans Git&nbsp;?
 
 <div class="cta-row">
 <div class="cta">
 
-## `git clone` · `make local-up` · feedback en issue
+## `git clone` · `make local-up` · feedback issue
 
 **github.com/Destynova2/st4ck** — étoiles bienvenues
 **Contact** : issues GitHub · Slack CNCF Lorient
