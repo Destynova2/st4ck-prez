@@ -31,15 +31,17 @@ section {
 }
 
 section::after {
-  color: var(--cnl-muted);
+  color: #1f2937;
   font-size: 14px;
+  font-weight: 500;
   right: 48px;
   bottom: 32px;
 }
 
 footer {
-  color: var(--cnl-muted);
+  color: #1f2937;
   font-size: 14px;
+  font-weight: 500;
   left: 48px;
   bottom: 32px;
   padding: 0;
@@ -376,3 +378,21 @@ section.stats h1 { margin-bottom: 0.4em; }
 .two-col > div pre { font-size: 15px; padding: 14px 16px; }
 .two-col > div ul { font-size: 20px; }
 .two-col > div ul li { margin: 0.18em 0; }
+
+/* Warning callout — high-contrast block for honest ⚠️ caveats.
+   Wrap content in <div class="warn">…</div>. Pink-bordered + ink text
+   so it stays readable on projectors where muted greys wash out. */
+.warn {
+  border-left: 6px solid var(--cnl-pink);
+  background: #fff5f5;
+  color: var(--cnl-ink);
+  padding: 10px 18px;
+  margin: 14px 0 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+.warn p { margin: 0; }
+.warn strong { color: var(--cnl-pink); font-weight: 700; }
+.warn em { color: var(--cnl-ink); font-style: normal; font-weight: 600; }

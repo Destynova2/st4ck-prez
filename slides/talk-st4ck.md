@@ -83,9 +83,9 @@ Transition : « st4ck, c'est ce que j'aurais voulu avoir ce jour-là. »
 <span class="sub">8 stacks séquentiels, un seul <code>make</code></span>
 </div>
 <div>
-<span class="num">0</span>
-<span class="label">secret en clair dans le repo</span>
-<span class="sub">random_id Terraform → OpenBao → ExternalSecrets</span>
+<span class="num">0 fuite</span>
+<span class="label">gitleaks scan en CI à chaque PR</span>
+<span class="sub">random_id Terraform → OpenBao → Helm</span>
 </div>
 <div>
 <span class="num">−65 %</span>
@@ -139,15 +139,18 @@ make bootstrap   # pod Podman, local OU sur la VM CI Scaleway
 
 - **OpenBao 3-node Raft** — state backend + secrets KV v2
 - **vault-backend** (mTLS) — proxy HTTP pour OpenTofu
-- **Gitea** + **Woodpecker** — source Flux + runner CI
+- **Gitea** — source Flux (manifestes + values)
+- **Woodpecker CI** — runner `tofu apply`, `kubectl apply`
 - **Matchbox** — PXE / iPXE pour bare-metal Day 1
 
-4 stages Scaleway · IAM → image → cluster → CI · `tofu init -migrate-state` (tunnel SSH local → distant)
-
 > *Le cluster K8s peut être wipé : **ce pod survit**.*
-> *Re-bootstrap complet ~30-45 min · tfstate chiffré Transit AES256-GCM96.*
+> *Re-bootstrap ~30-45 min · tfstate chiffré Transit AES256-GCM96.*
 
-⚠️ *HA OpenBao : workaround scale 1→3 séquentiel — Helm-native HA reverté 2026-04-29 (split-brain Raft).*
+<div class="warn">
+
+**⚠️ HA OpenBao** — workaround scale 1→3 séquentiel · Helm-native HA reverté 2026-04-29 (split-brain Raft, ADR-026).
+
+</div>
 
 <!--
 Pacing: 90 s. Slide meta-infra qui répond à la question piège : « où vit le tfstate avant que K8s n'existe ? ».
@@ -260,7 +263,7 @@ Si la salle se réveille ici, c'est l'occasion de mentionner grob plus longuemen
 - ❌ Secrets dans des `values.yaml` Helm → **fuite garantie**, audit ANSSI échoue
 - ❌ `kubectl apply -f` pour bootstrap → impératif, **non-rejouable** (DR impossible)
 - ❌ Empiler les CRDs sans ADR → **dette d'archi** (maturité Sandbox vs Graduated à évaluer)
-- ❌ Service mesh par défaut → **+40 % charge ops** sans bénéfice (NetworkPolicy + Cilium mTLS suffisent — ADR-013)
+- ❌ Service mesh par défaut → **charge ops significative** sans bénéfice mesuré (NetworkPolicy + Cilium mTLS suffisent — ADR-013)
 - ❌ Backup non-testé → **RTO non garanti** (`velero restore` validé manuellement, automation CI roadmap Q2)
 
 > *« Si ça marche en dev, ça marche en prod » : la phrase qui coûte le plus cher en post-incident.*
@@ -351,7 +354,7 @@ Pacing: 5 s. Slide de bascule visuelle vers le terminal. Pas de texte à lire, c
 
 ---
 
-# Ce qui tourne en direct *(lancé à la slide 1)*
+# Ce qui tourne en direct *(lancé en parallèle depuis le début)*
 
 ```bash
 # Sur Scaleway, en parallèle de mon talk
