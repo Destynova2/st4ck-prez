@@ -78,7 +78,7 @@ Transition : « st4ck, c'est ce que j'aurais voulu avoir ce jour-là. »
 
 <div class="stats">
 <div>
-<span class="num">30 min</span>
+<span class="num">30–45 min</span>
 <span class="label">du bare metal à la prod</span>
 <span class="sub">8 stacks séquentiels, un seul <code>make</code></span>
 </div>
@@ -90,12 +90,12 @@ Transition : « st4ck, c'est ce que j'aurais voulu avoir ce jour-là. »
 <div>
 <span class="num">−65 %</span>
 <span class="label">coût VM → bare metal</span>
-<span class="sub"><strong>1715 €</strong> → <strong>599 €/mois</strong><br/>même CPU, +320 GB de RAM</span>
+<span class="sub"><strong>1715 €</strong> → <strong>599 €/mois</strong><br/>même CPU, +320 GB de RAM (ADR-024)</span>
 </div>
 </div>
 
 <!--
-Pacing: 60 s. Pointer chaque carte. Mesurer les chiffres : « 30 min, c'est sur Scaleway,
+Pacing: 60 s. Pointer chaque carte. Mesurer les chiffres : « 30 à 45 min, c'est sur Scaleway,
 incluant le provisioning des serveurs. 0 secret, c'est `gitleaks detect` → 0 fuite. −65 %,
 c'est l'écart mensuel entre une POP2 64C/256G à 1715 € et une EM-I620E 64C/576G à 599 €
 (références Scaleway, ADR-024). Break-even dès 2 h/jour de charge soutenue, hors coût ops. »
@@ -129,48 +129,55 @@ Si Istio : NetworkPolicy + Cilium mTLS suffisent (ADR-013). On y reviendra.
 
 ---
 
-# Diff #1 — **Pas de shell sur les nœuds**
+# **Les deux gros diffs** — l'OS et les secrets
+
+<div class="two-col">
+<div>
+
+## Pas de shell sur les nœuds
 
 ```bash
-# Le seul accès aux nœuds : une API gRPC mTLS
 talosctl -n 10.0.0.10 services
-talosctl -n 10.0.0.10 upgrade --image ghcr.io/siderolabs/...
-talosctl -n 10.0.0.10 reset   # reproductible, pas de drift
+talosctl -n 10.0.0.10 upgrade --image …
+talosctl -n 10.0.0.10 reset
 ```
 
-- **Zéro `ssh root@`** — la surface d'attaque s'effondre
-- **Zéro patch manuel** — l'OS se redéploie, il ne se modifie pas
-- Conformité PCI/HDS plus simple à défendre devant un auditeur
-- Courbe d'apprentissage `talosctl` : ~1 heure
+- Zéro `ssh root@` — surface d'attaque s'effondre
+- Zéro patch manuel — l'OS se **redéploie**
+- PCI/HDS plus simple à défendre
+- Courbe `talosctl` : ~1 h
 
-<!--
-Pacing: 90 s. Anecdote : la première fois qu'on essaie SSH et qu'on découvre qu'il n'y a même pas de sshd.
-ROI sécurité immédiat. Si quelqu'un demande « comment je débugge un nœud cassé ? » :
-`talosctl support` produit un bundle. Si vraiment cassé, on `reset` le nœud — 5 min.
--->
+</div>
+<div>
 
----
-
-# Diff #2 — **Les secrets ne touchent pas le disque dev**
+## Les secrets ne touchent pas le disque
 
 ```hcl
-# Terraform génère, OpenBao stocke, ESO injecte dans K8s
-resource "random_id" "admin_token" { byte_length = 32 }
+resource "random_id" "admin_token" {
+  byte_length = 32
+}
 resource "vault_kv_secret_v2" "admin" {
-  data_json = jsonencode({ token = random_id.admin_token.b64_url })
+  data_json = jsonencode({
+    token = random_id.admin_token.b64_url
+  })
 }
 ```
 
-- État Terraform chiffré dans **vault-backend** (KV v2)
-- ExternalSecrets matérialise les `Secret` K8s à la volée
-- **Aucun humain** ne voit ni ne saisit le secret initial
-- `gitleaks detect` → **0 fuite** · scan en CI à chaque PR
+- État TF chiffré (vault-backend, KV v2)
+- ESO matérialise les `Secret` K8s à la volée
+- **Aucun humain** ne saisit le secret initial
+- `gitleaks detect` → **0 fuite**
+
+</div>
+</div>
 
 <!--
-Pacing: 90 s. C'est LE slide « souveraineté ».
+Pacing: 150 s (ex 90+90). Slide pivot : les deux choix d'archi qui font la souveraineté.
+À gauche : Talos zéro shell. La première fois qu'on essaie ssh et qu'on découvre qu'il n'y a même pas de sshd.
+ROI sécurité immédiat. Si on demande « comment débugger un nœud cassé ? » → `talosctl support` produit un bundle ; si vraiment cassé, `reset` le nœud — 5 min.
+À droite : random_id Terraform + ESO. Aucun humain ne voit ni ne saisit le secret initial.
 Démo live possible : ouvrir le repo, `gitleaks detect` → 0 fuite. Effet garanti (vrai scanner, pas un grep naïf).
-Anti-pattern qu'on évite : Helm values avec `password: changeme` qui finissent
-en commit. Ici Terraform génère, on ne saisit jamais rien.
+Anti-pattern qu'on évite : Helm values avec `password: changeme` qui finissent en commit.
 -->
 
 ---
@@ -208,24 +215,6 @@ Si la salle se réveille ici, c'est l'occasion de mentionner grob plus longuemen
 
 ---
 
-# Roadmap — **Kamaji, Karpenter, grob**
-
-- 🚧 **Gate 2** — CloudNativePG, Ollama CPU, DecapCMS *(2026-Q2, en cours)*
-- 🎯 **Kamaji** : un control plane par tenant/agent (ADR-020)
-- 🎯 **Karpenter** + CAPI : **−65 %** vs cloud managé (EM-I620E vs POP2, ADR-024)
-- 🎯 **grob** : proxy LLM frontal (audit, DLP *(prévention de fuite)*, routing multi-provider)
-- 🎯 vLLM + Mixtral 8x22B sur GPU dédié, RAG souverain *(2026-Q3)*
-
-<!--
-Pacing: 90 s.
-Recadrage du slide vision : Kamaji + Karpenter sont les briques infra,
-grob est la brique gouvernance LLM, et le tout converge vers "héberger des agents en prod".
-Si on me demande "vous pouvez me montrer grob ?" : "Volontiers, mais c'est un autre talk
-quand ce sera prêt, sinon github.com/azerozero/grob en attendant".
--->
-
----
-
 <!-- _class: divider -->
 
 ## Acte 3
@@ -239,7 +228,7 @@ quand ce sera prêt, sinon github.com/azerozero/grob en attendant".
 - ❌ `kubectl apply -f` pour bootstrap → impératif, **non-rejouable** (DR impossible)
 - ❌ Empiler les CRDs sans ADR → **dette d'archi** (maturité Sandbox vs Graduated à évaluer)
 - ❌ Service mesh par défaut → **+40 % charge ops** sans bénéfice (NetworkPolicy + Cilium mTLS suffisent — ADR-013)
-- ❌ Backup non-testé → **RTO non garanti** (`velero restore` rejoué en CI à chaque PR)
+- ❌ Backup non-testé → **RTO non garanti** (`velero restore` validé manuellement, automation CI roadmap Q2)
 
 > *« Si ça marche en dev, ça marche en prod » : la phrase qui coûte le plus cher en post-incident.*
 
@@ -276,19 +265,42 @@ Plus on est honnête sur les gaps, plus on gagne leur confiance.
 
 ---
 
+# st4ck est lui-même **construit par des agents**
+
+**Brigade de Cuisine** — orchestration multi-agent Claude Code
+
+- **Chef** · plan, dispatch, ADRs
+- **Sous-Chef Merge** · seul autorisé à push/PR
+- **Commis** × N · code en parallèle, write-set isolé
+- **3 voters** (qualité · scope · sécu) · quorum avant merge
+- **10 worktrees git** : isolation, pas de stomping
+
+> *Pas encore d'agents en prod chez des clients —*
+> *st4ck a 1 utilisateur (moi). Mais déjà, des agents la construisent.*
+
+<!--
+Pacing: 75 s. Slide différenciateur. L'audience CNCF Lorient est mid-deep — leur montrer que tu shippes vite ET avec rigueur via une brigade Claude Code multi-agent les calme sur le « solo qui réinvente K8s ».
+Honnêteté assumée : aujourd'hui 1 user (moi), pas de clients. Mais les agents sont déjà au taquet sur la fabrication. Boucle narrative : Acte 2 vendait « héberger des agents », ici on prouve qu'on en utilise déjà pour produire.
+Si on demande « combien de tokens ? » → coût marginal vs gain de focus + parallélisme. Si on demande « où c'est documenté ? » → `.claude/shared-state.md` dans le repo.
+-->
+
+---
+
 # **Ce qui tourne** · ce qui arrive
 
 | | Périmètre | Statut |
 |---|---|---|
-| ✅ **Aujourd'hui** | 8 stacks fondations · 0 secret · 30 min bare-metal-to-prod · −65&nbsp;% | Livré,&nbsp;mesuré |
-| 🚧 **Q2 2026** | CloudNativePG · Ollama CPU · DecapCMS | En cours |
-| 🎯 **Q3 2026** | Kamaji multi-tenant · grob (proxy LLM) · vLLM/Mixtral | Roadmap |
+| ✅ **Aujourd'hui** | 8 stacks fondations · 0 secret · 30–45 min · −65&nbsp;% (ADR-024) | Livré,&nbsp;mesuré |
+| 🚧 **Q2 2026** | Phase A KaaS — Kamaji + CAPI + Karpenter (ADR-020) · CloudNativePG · Ollama CPU | En cours |
+| 🎯 **Q3 2026** | Kamaji multi-tenant prod · grob (proxy LLM, audit, DLP) · vLLM + Mixtral 8x22B · RAG souverain | Roadmap |
 
 > *Démo live de l'infra dans 2 minutes. La démo **agent** live viendra quand grob sera prêt.*
 
 <!--
 Pacing: 60 s. Slide d'honnêteté qui désamorce LA question Q&A létale : « vous pouvez nous montrer un agent qui tourne ? ».
 Réponse : « Pas un agent aujourd'hui. Mais l'infra qui les hébergera, oui — regardons. »
+Q2 = Phase A KaaS scaffolded sur main (branches `chore/phase-a-kaas-scaffold`, `feat/kamaji-karpenter`), pas encore de control plane prod.
+Q3 = grob mature + vLLM/Mixtral GPU + RAG souverain. ADR-020 (Kamaji), ADR-024 (Karpenter EM-I620E vs POP2) dispos sur le repo.
 Transition directe vers la slide démo.
 -->
 

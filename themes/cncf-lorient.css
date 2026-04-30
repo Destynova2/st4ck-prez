@@ -358,3 +358,21 @@ section.stats h1 { margin-bottom: 0.4em; }
 .stats .sub strong { color: var(--cnl-ink); font-weight: 700; }
 .stats > div:nth-child(2) .sub strong { color: var(--cnl-pink); }
 .stats > div:nth-child(3) .sub strong { color: var(--cnl-primary); }
+
+/* Two-column layout — used for "two diffs" / "before-after" slides.
+   Wrap with <div class="two-col"><div>…</div><div>…</div></div>. */
+.two-col {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  margin-top: 12px;
+}
+.two-col > div { flex: 1; min-width: 0; }
+.two-col > div h2 {
+  font-size: 26px;
+  margin: 0 0 12px;
+  color: var(--cnl-primary);
+}
+.two-col > div pre { font-size: 15px; padding: 14px 16px; }
+.two-col > div ul { font-size: 20px; }
+.two-col > div ul li { margin: 0.18em 0; }
