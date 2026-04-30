@@ -420,4 +420,113 @@ Pacing: 60 s. Callback explicite à la slide 2 (« secrets dans Git ») → « n
 QR LinkedIn affiché tout le long du Q&A → la salle peut scanner pendant les questions.
 Q&A possibles : « k3s vs Talos », « comment vous gérez le DR ? », « cost réel à l'usage ».
 Réponses prêtes : ADR-013 (mesh), ADR-018 (DR), ADR-024 (cost).
+Annexes A/B/C disponibles pour Q&A — naviguer avec Page Down si besoin de schémas.
+-->
+
+---
+
+<!-- _class: divider -->
+<!-- _footer: 'st4ck — Annexes · CNCF Lorient · 2026-04-30' -->
+
+## Q&A · annexes
+# **Schémas de référence**
+
+<!--
+Pacing: skip en flux normal. Slide servant de séparateur visuel entre la close du talk
+et les schémas pour Q&A. Si un participant demande l'archi : Page Down vers Annexe A.
+-->
+
+---
+
+<!-- _footer: 'st4ck — Annexe A · CNCF Lorient · 2026-04-30' -->
+
+# Annexe A — **Architecture st4ck**
+
+```
+┌─ Workstation OR Scaleway CI VM ─────────────────────────────┐
+│ Pod Podman (Quadlet · 5 conteneurs)                         │
+│   • OpenBao 3-node Raft  ←─ KV v2 + Transit AES256-GCM96    │
+│   • vault-backend (mTLS) ←─ HTTP proxy pour OpenTofu        │
+│   • Gitea                ←─ source Flux (manifests + values)│
+│   • Woodpecker CI        ←─ runner tofu / kubectl           │
+│   • Matchbox             ←─ PXE / iPXE bare-metal Day 1     │
+└─────────────────────────────────────────────────────────────┘
+                  │
+                  ▼  tofu apply (state chiffré dans OpenBao)
+┌─ Talos cluster · K8s 1.35 ──────────────────────────────────┐
+│ 3 control planes + 3 workers · zéro SSH · API mTLS          │
+│ CNI Cilium 1.17 (eBPF) · CD Flux v2 · S3 Garage + Velero    │
+│ 14 stacks · 8 fondations live + 6 KaaS (Phase A en cours)   │
+│ PKI · monitoring · identity · security · storage · ...      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+<!--
+Pacing: ouvrir uniquement sur Q&A « montre l'archi ».
+Points clés à pointer : (1) tout le bootstrap vit dans le pod Podman, (2) le state TF est chiffré
+dans OpenBao via Transit, donc même `cat tfstate` ne fuite rien, (3) la flèche descendante
+marque la chicken-and-egg résolue : OpenTofu écrit dans OpenBao AVANT que K8s n'existe.
+-->
+
+---
+
+<!-- _footer: 'st4ck — Annexe B · CNCF Lorient · 2026-04-30' -->
+
+# Annexe B — **Bootstrap from zero**
+
+```
+T+0:00  make scaleway-bootstrap-vm
+        ├ tofu apply IAM (clés R/W + readonly)
+        ├ build Talos image (factory.talos.dev)
+        └ scw instance create CI VM (DEV1-M, cloud-init)
+T+0:05  Pod Podman lance · OpenBao 1-node + vault-backend
+        ├ PKI 3-tier (root → infra → app CA)
+        └ Gitea API + Woodpecker OAuth seed
+T+0:10  scaleway-fetch-creds && scaleway-tunnel-start
+        └ scp kms-output/* + ssh -L 8080 -L 8200 (bg)
+T+0:12  tofu init -migrate-state    # file → HTTP distant
+T+0:15  make scaleway-up · cluster Talos + 8 stacks séquentiels
+        Cilium → PKI → monitoring → identity → security → storage → flux
+T+0:35  make scaleway-headlamp · token clipboard → dashboard ✓
+```
+
+<!--
+Pacing: pour Q&A « combien de temps réellement ? ». Insister sur le séquentiel : on ne paralllise
+pas car chaque stack a une dépendance forte sur la précédente (PKI avant identity, identity
+avant security policies, etc.). 30-45 min mesuré sur Scaleway POP2-4C-16G.
+Si question « pourquoi 1-node OpenBao au début ? » : split-brain Raft Phase F-bis-2 reverté hier
+(commit 78a301f), workaround scale-up séquentiel 1 → 3 après pod 0 leader établi.
+-->
+
+---
+
+<!-- _footer: 'st4ck — Annexe C · CNCF Lorient · 2026-04-30' -->
+
+# Annexe C — **Chaîne secret end-to-end**
+
+```
+TF random_id / random_password
+        │
+        ▼
+vault-backend (HTTP proxy, mTLS)
+        │
+        ▼
+OpenBao KV v2 (Raft 3-node)  ←─ tfstate chiffré Transit AES256-GCM96
+        │
+        ├──── Helm templatefile()  →  HelmRelease (Flux)  →  K8s Secret  →  Pod
+        │      « chemin défaut » · 12 stacks · synchrone Terraform
+        │
+        └──── ClusterSecretStore  →  ExternalSecret CRD  →  K8s Secret  →  Pod
+              « chemin ESO ciblé » · identity (Kratos/Hydra) + cosign
+```
+
+> *ADR-007 (OpenBao + ESO amendé) · ADR-008 (random_id) · ADR-009 (state backend OpenBao)*
+
+<!--
+Pacing: Q&A « comment exactement vous évitez les secrets en clair ? ».
+8 hops réels. Le tfstate vit chiffré dans OpenBao via le moteur Transit (AES256-GCM96), donc
+même un dump du tfstate ne fuite rien. ESO n'est PAS le chemin par défaut (ADR-007 amendé) —
+il sert pour identity (Kratos/Hydra) qui consomme OpenBao hors-Terraform et pour cosign.
+Pour les 12 autres stacks : Helm templatefile() injecte directement les valeurs depuis le tfstate
+décodé en mémoire (jamais sur disque dev).
 -->
