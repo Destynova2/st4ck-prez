@@ -113,18 +113,51 @@ Transition : « Le reste de ce talk = la preuve de ces trois chiffres. »
 
 # st4ck en **5 briques**
 
-| Couche | Choix | Pourquoi |
+| Couche | Choix | Géré par |
 |---|---|---|
-| **OS** | Talos Linux 1.12 | Immutable, zéro SSH, API only |
-| **IaC** | OpenTofu + Flux | 8 stacks séquentiels, GitOps day-2 |
-| **Réseau (CNI)** | Cilium 1.17 (eBPF) | Remplace kube-proxy, mTLS *(auth chiffrée)*, L7 policies |
-| **Secrets** | OpenBao + ExternalSecrets (ESO) | Random_id Terraform → jamais en clair |
-| **Stockage** | Garage (S3) + Velero | ~300 MB RAM, backup/restore validé |
+| **OS** | Talos Linux 1.12 — immutable, zéro SSH | TF |
+| **CNI** | Cilium 1.17 (eBPF) — kube-proxy-less, mTLS | TF + Flux |
+| **Secrets** | OpenBao Raft + `templatefile()` *(ESO ciblé)* | TF |
+| **Stockage** | Garage S3 + Velero — ~300 MB RAM | TF + Flux |
+| **GitOps** | Flux v2 — 14 stacks réconciliés en continu | Flux |
+
+> *TF = bootstrap & ordering strict · Flux = drift detection day-2 (ADR-004)*
 
 <!--
-Pacing: 90 s. Une ligne par brique. Insister sur *séquentiels* (Cilium-first évite les
-race conditions CNI) et *random_id* (Terraform génère, ne saisit jamais).
-Si Istio : NetworkPolicy + Cilium mTLS suffisent (ADR-013). On y reviendra.
+Pacing: 80 s. Une ligne par brique. Insister sur la frontière TF/Flux (ADR-004) : TF déploie en ordering strict (chicken-egg Cilium, Helm initial release), Flux gère la dérive jour-2 (drift detection, reconciliation continue).
+ESO (External Secrets Operator) n'est PAS le chemin par défaut chez nous (ADR-007 amendé). La majorité des secrets passent par `templatefile()` Terraform → Helm values directes. ESO ne sert que pour identity (Kratos/Hydra OIDC) et cosign — workloads qui consomment OpenBao hors TF.
+Si Istio dans la salle : NetworkPolicy + Cilium mTLS suffisent (ADR-013). Pas de mesh par défaut.
+-->
+
+---
+
+# Le pod qui démarre **avant K8s**
+
+```
+make bootstrap   # pod Podman, local OU sur la VM CI Scaleway
+```
+
+- **OpenBao 3-node Raft** — state backend + secrets KV v2
+- **vault-backend** (mTLS) — proxy HTTP pour OpenTofu
+- **Gitea** + **Woodpecker** — source Flux + runner CI
+- **Matchbox** — PXE / iPXE pour bare-metal Day 1
+
+4 stages Scaleway · IAM → image → cluster → CI · `tofu init -migrate-state` (tunnel SSH local → distant)
+
+> *Le cluster K8s peut être wipé : **ce pod survit**.*
+> *Re-bootstrap complet ~30-45 min · tfstate chiffré Transit AES256-GCM96.*
+
+⚠️ *HA OpenBao : workaround scale 1→3 séquentiel — Helm-native HA reverté 2026-04-29 (split-brain Raft).*
+
+<!--
+Pacing: 90 s. Slide meta-infra qui répond à la question piège : « où vit le tfstate avant que K8s n'existe ? ».
+5 conteneurs dans un pod Podman (Quadlet, ADR-005) — OpenBao + vault-backend + Gitea + Woodpecker + Matchbox.
+Le state TF est chiffré dans OpenBao via Transit AES256-GCM96, exporté via mTLS vers OpenTofu.
+4 stages Scaleway : IAM (1) → image Talos (2) → cluster K8s (3) → CI VM (4).
+Migration tunnel SSH local → distant : `tofu init -migrate-state` bascule backend file → HTTP.
+Le pod SURVIT à un wipe complet du cluster K8s — c'est la chicken-and-egg résolue (ADR-009 state backend).
+
+Honnêteté assumée : HA Raft OpenBao a souffert d'un split-brain Phase F-bis-2 (commit 78a301f, 2026-04-29). Workaround actuel = TF auto-recovery script (scale 1 → wait → scale 3). Pas glamour, mais ça marche. ADR-026 documente le risque accepté (static-seal avant migration KMS Scaleway).
 -->
 
 ---
@@ -163,8 +196,8 @@ resource "vault_kv_secret_v2" "admin" {
 }
 ```
 
-- État TF chiffré (vault-backend, KV v2)
-- ESO matérialise les `Secret` K8s à la volée
+- tfstate chiffré dans OpenBao (Transit AES256-GCM96)
+- Helm `templatefile()` injecte (ESO ciblé : identity, cosign)
 - **Aucun humain** ne saisit le secret initial
 - `gitleaks detect` → **0 fuite**
 
