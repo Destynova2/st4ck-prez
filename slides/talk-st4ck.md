@@ -118,7 +118,7 @@ Transition : « Le reste de ce talk = la preuve de ces trois chiffres. »
 | **OS** | Talos Linux 1.12 — immutable, zéro SSH | TF |
 | **CNI** | Cilium 1.17 (eBPF) — kube-proxy-less, mTLS | TF + Flux |
 | **Secrets** | OpenBao Raft + `templatefile()` *(ESO ciblé)* | TF |
-| **Stockage** | Garage S3 + Velero — ~300 MB RAM | TF + Flux |
+| **Stockage** | Garage S3 — ~300 MB RAM, compatible S3 | TF + Flux |
 | **GitOps** | Flux v2 — 14 stacks réconciliés en continu | Flux |
 
 > *TF = bootstrap & ordering strict · Flux = drift detection day-2 (ADR-004)*
